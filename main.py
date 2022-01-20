@@ -5,17 +5,17 @@ import time
 import json
 from datetime import datetime
 
+#sends alert everytime
 test_mode = False
 
 #format: [<telegram chat id>, <lat>, <lon>, <name>, <update description? True | False>]
 chats = [[-1000000000, 50, 50, 'Example', True]]
-#don't send alerts at night
-inactive_hours = [1, 7]
+inactive_hours = [1, 7] #don't send alerts at night
 base = 'https://api.telegram.org/bot<bot-token>'
 min_percents = 20
 max_cloud_cover = 40
 
-def request_yr(chat):
+def request_yr(chat): 
     start = time.time()
     print('  Requesting new forecast data from api.met.no')
 
@@ -61,7 +61,7 @@ def request_noaa():
 
     return img, data_dict
 
-def edit_image(img):
+def edit_image(img): #zoom and rotate aurora oval image
     img = img.rotate(250)
     width, height = img.size
     img = img.crop((1.8 * width / 4, 2 * height / 4, 3.2 * width / 4, 3.5 * height / 4))
@@ -98,7 +98,7 @@ def check_data(local_time):
     msg_body = {-1001643011786 : []}
 
     for chat in chats:
-        percents = data_dict.get((int(chat[2]), int(chat[1])), 0)
+        percents = data_dict.get((int(chat[2]), int(chat[1])), 0) #NOAA api coordinates (lon, lat)
         cloud_area_fraction, yr_forecast_time = request_yr(chat)
 
         print(f' {chat[3]} ({chat[1]}°, {chat[2]}°), aurora {percents}% ({aurora_forecast_time}), cloud cover {cloud_area_fraction}% ({yr_forecast_time})')
